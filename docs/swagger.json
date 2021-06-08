@@ -1,0 +1,248 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Swagger for FLYVO API\nFLYVO API provides access to FLYVO data from Visma.\nthe Api is used to provide access to secure zone data at Visma,\nsuch as event details, participation and so on.\nCommunication with Visma is performed vis RPC calls where the API is an\nRPC server. As such, the calls to Visma from frontend are faux synchronous.\nThe connection is kept open while the server waits for data from client at Visma side.",
+        "title": "Flyvo API Swagger",
+        "contact": {
+            "name": "TIP"
+        },
+        "license": {},
+        "version": "1.0"
+    },
+    "host": "localhost:7070",
+    "basePath": "/",
+    "paths": {
+        "/absence/count": {
+            "get": {
+                "description": "Returns amount of previous absences registered for a specific user",
+                "produces": [
+                    "text/plain"
+                ],
+                "summary": "Returns amount of previous absences registered",
+                "responses": {
+                    "200": {
+                        "description": "the absence count for the user",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "If auth proxy user-data-b64 header is missing (e.g. auth proxy circumvented)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any other error (e.g. rpc)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/absence/register": {
+            "post": {
+                "description": "Registers a user as absent in provided event",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Registers a user as absent in provided event",
+                "responses": {
+                    "200": {
+                        "description": "OK, user was registered as absent. Current absence count returned.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "If auth proxy user-data-b64 header is missing (e.g. auth proxy circumvented)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any other error (e.g. rpc)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api-doc": {
+            "get": {
+                "description": "Returns the swagger doc.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Swagger doc.",
+                "responses": {
+                    "200": {
+                        "description": "The swagger json.",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/event/participate/": {
+            "get": {
+                "description": "Registers a person as having participated in an event",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Register participation",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "activity a person wants to participate in",
+                        "name": "activityId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "If participant was successfully registered in event",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "No activity mapped to provided id",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any unexpected error (e.g. unable to connect to Redis)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/event/retrieve": {
+            "get": {
+                "description": "Returns events where the user is an expected participant",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Returns events where the user is an expected participant",
+                "responses": {
+                    "200": {
+                        "description": "json user object",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "If missing or bad params, or if auth proxy user-data-b64 header is missing (e.g. auth proxy circumvented)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any other error (e.g. rpc)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/generate/participationId": {
+            "get": {
+                "description": "Generates participation ID for event based on activity ID",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Generate participation ID for event",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id of an existing event",
+                        "name": "activityId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A participation ID in a json structure: {'participationId':ID'} ",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "If unauthorized (not teacher in GCE)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any other error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/generateQrCode": {
+            "get": {
+                "description": "Generates a QR code image encoded in base64",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create QR code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id displayed to participants in physical form and QR code",
+                        "name": "participationId",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A base 64 encoded image of QR code",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "If unauthorized (not teacher in GCE)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "422": {
+                        "description": "If participation ID not found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "On any unexpected error (e.g. unable to connect to Redis)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}

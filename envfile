@@ -1,0 +1,17 @@
+# Which architecture to build - see $(ALL_ARCH) for options.
+ARCH ?= amd64
+
+# The binary to build (just the basename).
+BIN := flyvo-api
+
+# This repo's root import path (under GOPATH).
+PKG := github.com/tktip/flyvo-api
+
+# Where to push the docker image.
+REGISTRY ?= replaceme
+
+# directories which hold app source (tests are run from these directories)
+SRC_DIRS := cmd pkg internal
+
+#files which hold swagger documentation.
+SWAGGER_INFO := ./pkg/swagex/swagger.go

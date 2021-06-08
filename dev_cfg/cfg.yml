@@ -1,0 +1,24 @@
+debug: true
+
+qrUrl: http://go-qr-generator:8080/
+participantUrl: http://domain.no/#/e/register-participation
+gcalUrl: "http://google-calendar:5555/trovo/"
+
+absentCron: "0 0 2 * * *"
+
+rpc:
+  port: "50051"
+  gcalUrl: "http://calendar-queue:8080/trovo/"
+  #cert: "dev_cfg/server.crt"
+  #key: "dev_cfg/server.key"
+
+redis:
+  url: "redis:6379"
+  db: 1
+  password: ""
+  ttl: 24h
+
+trovo:
+  creds: file::./dev_cfg/gcreds.json
+  adminUser: api-admin@test.no
+  teacherGroup: classroom_teachers@test.no

@@ -1,0 +1,173 @@
+basePath: /
+host: localhost:7070
+info:
+  contact:
+    name: TIP
+  description: |-
+    Swagger for FLYVO API
+    FLYVO API provides access to FLYVO data from Visma.
+    the Api is used to provide access to secure zone data at Visma,
+    such as event details, participation and so on.
+    Communication with Visma is performed vis RPC calls where the API is an
+    RPC server. As such, the calls to Visma from frontend are faux synchronous.
+    The connection is kept open while the server waits for data from client at Visma side.
+  license: {}
+  title: Flyvo API Swagger
+  version: "1.0"
+paths:
+  /absence/count:
+    get:
+      description: Returns amount of previous absences registered for a specific user
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: the absence count for the user
+          schema:
+            type: string
+        "400":
+          description: If auth proxy user-data-b64 header is missing (e.g. auth proxy
+            circumvented)
+          schema:
+            type: string
+        "500":
+          description: On any other error (e.g. rpc)
+          schema:
+            type: string
+      summary: Returns amount of previous absences registered
+  /absence/register:
+    post:
+      consumes:
+      - application/json
+      description: Registers a user as absent in provided event
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK, user was registered as absent. Current absence count returned.
+          schema:
+            type: string
+        "400":
+          description: If auth proxy user-data-b64 header is missing (e.g. auth proxy
+            circumvented)
+          schema:
+            type: string
+        "500":
+          description: On any other error (e.g. rpc)
+          schema:
+            type: string
+      summary: Registers a user as absent in provided event
+  /api-doc:
+    get:
+      description: Returns the swagger doc.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The swagger json.
+          schema:
+            type: string
+      summary: Swagger doc.
+  /event/participate/:
+    get:
+      description: Registers a person as having participated in an event
+      parameters:
+      - description: activity a person wants to participate in
+        in: query
+        name: activityId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: If participant was successfully registered in event
+          schema:
+            type: string
+        "422":
+          description: No activity mapped to provided id
+          schema:
+            type: string
+        "500":
+          description: On any unexpected error (e.g. unable to connect to Redis)
+          schema:
+            type: string
+      summary: Register participation
+  /event/retrieve:
+    get:
+      description: Returns events where the user is an expected participant
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: json user object
+          schema:
+            type: string
+        "400":
+          description: If missing or bad params, or if auth proxy user-data-b64 header
+            is missing (e.g. auth proxy circumvented)
+          schema:
+            type: string
+        "500":
+          description: On any other error (e.g. rpc)
+          schema:
+            type: string
+      summary: Returns events where the user is an expected participant
+  /generate/participationId:
+    get:
+      description: Generates participation ID for event based on activity ID
+      parameters:
+      - description: id of an existing event
+        in: query
+        name: activityId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'A participation ID in a json structure: {''participationId'':ID''} '
+          schema:
+            type: string
+        "403":
+          description: If unauthorized (not teacher in GCE)
+          schema:
+            type: string
+        "500":
+          description: On any other error
+          schema:
+            type: string
+      summary: Generate participation ID for event
+  /generateQrCode:
+    get:
+      description: Generates a QR code image encoded in base64
+      parameters:
+      - description: id displayed to participants in physical form and QR code
+        in: query
+        name: participationId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: A base 64 encoded image of QR code
+          schema:
+            type: string
+        "403":
+          description: If unauthorized (not teacher in GCE)
+          schema:
+            type: string
+        "422":
+          description: If participation ID not found
+          schema:
+            type: string
+        "500":
+          description: On any unexpected error (e.g. unable to connect to Redis)
+          schema:
+            type: string
+      summary: Create QR code
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

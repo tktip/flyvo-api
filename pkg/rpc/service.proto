@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package rpc;
+
+//to build:  protoc --go_out=plugins=grpc:. *.proto
+
+
+service TipFlyvo {
+    rpc PublishEvent (Event) returns (Generic) {
+    }
+    rpc UpdateEvent (Event) returns (Generic) {
+    }
+    rpc DeleteEvent (String) returns (Generic) {
+    }
+    rpc RemoveFromEvent (String) returns (Generic) {
+    }
+    rpc HandleGeneric (Generic) returns (Generic) {
+    }
+    rpc ProcessRequests (stream Generic) returns (stream Generic) {
+    }
+}
+
+message String {
+    string value = 1;
+}
+
+message Event {
+    string vismaActivityId = 1;
+    string activityTitle = 2;
+    string to = 3;
+    string from = 4;
+    string location = 5;
+    string room = 6;
+    repeated Participant participants = 7;
+}
+
+message Participant {
+    string givenName = 1;
+    string surname = 2;
+    string vismaId = 3;
+}
+
+message Generic {
+    string path = 1;
+    string msgID = 2;
+    map<string, string> headers = 3;
+    bytes body = 4;
+    int32 status = 5;
+}
